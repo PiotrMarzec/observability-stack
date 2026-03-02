@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # ─── Prometheus self-monitoring ────────────────────
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # ─── VM1: System metrics (node_exporter) ───────────
+  - job_name: "node-vm1"
+    static_configs:
+      - targets: ["__APPS_VM_IP__:9100"]
+        labels:
+          instance: "vm1-apps"
+
+  # ─── VM1: Caddy metrics (uncomment if enabled) ────
+  # - job_name: "caddy"
+  #   static_configs:
+  #     - targets: ["__APPS_VM_IP__:2019"]
+  #       labels:
+  #         instance: "vm1-caddy"
+
+  # ─── VM1: Your app metrics ────────────────────────
+  # - job_name: "myapp"
+  #   metrics_path: /metrics
+  #   static_configs:
+  #     - targets: ["__APPS_VM_IP__:8080"]
+
+  # ─── Loki self-monitoring ─────────────────────────
+  - job_name: "loki"
+    static_configs:
+      - targets: ["loki:3100"]
