@@ -3,6 +3,16 @@
 # Idempotent: safe to run multiple times.
 set -euo pipefail
 
+echo "==> Configuring passwordless sudo for CI/CD deploys..."
+SUDOERS_FILE="/etc/sudoers.d/${USER}-deploy"
+if [ ! -f "$SUDOERS_FILE" ]; then
+    echo "$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee "$SUDOERS_FILE" > /dev/null
+    sudo chmod 440 "$SUDOERS_FILE"
+    echo "    Configured NOPASSWD sudo for $USER"
+else
+    echo "    Already configured, skipping."
+fi
+
 echo "==> Checking if Docker is already installed..."
 if command -v docker &>/dev/null && docker compose version &>/dev/null; then
     echo "==> Docker and Compose already installed, skipping bootstrap."
