@@ -35,12 +35,17 @@ jobs:
             ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
             'bash -s' < scripts/bootstrap.sh
 
-      - name: Sync files to VM
+      - name: Pull repo on VM
         run: |
-          rsync -avz --delete \
-            --exclude='.git' \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            ./ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:~/observability-staging/
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} \
+            'REPO_URL="https://github.com/PiotrMarzec/observability-stack.git"
+             REPO_DIR="$HOME/observability-staging"
+             if [ -d "$REPO_DIR/.git" ]; then
+               git -C "$REPO_DIR" pull --ff-only
+             else
+               git clone "$REPO_URL" "$REPO_DIR"
+             fi'
 
       - name: Deploy stack
         run: |

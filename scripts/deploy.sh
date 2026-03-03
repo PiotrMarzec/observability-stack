@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # deploy.sh — Sync config files and deploy the observability stack
-# Called by the GitHub Action after files are rsync'd to the VM.
+# Called by the GitHub Action after the repo is cloned/pulled on the VM.
 #
 # Required environment variables:
 #   APPS_VM_IP       — VM1 private IP (for Prometheus scrape targets)
@@ -17,7 +17,7 @@ echo "==> Creating deploy directory..."
 sudo mkdir -p "$DEPLOY_DIR"
 
 echo "==> Syncing files to ${DEPLOY_DIR}..."
-# The GitHub Action rsync's the repo to ~/observability-staging/
+# The GitHub Action git-clones/pulls the repo to ~/observability-staging/
 STAGING_DIR="$HOME/observability-staging"
 
 # Copy all config files, preserving directory structure
